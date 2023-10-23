@@ -1,0 +1,56 @@
+@page {
+  size: A4;
+  margin: .5cm;
+}
+
+table {
+  width: 100%;
+  max-height: 100%;
+  table-layout: fixed;
+  border: 5px dashed black;
+  border-collapse: collapse;
+}
+
+td {
+  border: 5px solid black;
+  border-collapse: collapse;
+  width: 50%; /* For a 2xN table, each column should take 50% of the available width */
+}
+
+.cert-cell {
+  padding: 10px;
+}
+
+.cert-wrapper {
+  position: relative;
+}
+
+.cert-wrapper img {
+  max-width: 100%;
+}
+
+.cert-edit-menu {
+  display: none;
+}
+
+.cert-wrapper:hover .cert-edit-menu {
+  display: block;
+}
+
+.cert-edit-menu {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+.cert-move-menu {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+
+/*Page breaks for the printer*/
+@media print {
+    .pagebreak { page-break-before: always; }
+}

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>File Upload</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+
+  <h1>Upload Documents</h1>
+  
+
+  <!-- Form -->
+  <form action="/upload" method="POST" id="uploadForm" enctype="multipart/form-data">
+
+
+    <!-- Text inputs -->
+    <input type="email" name="email" required placeholder="Email">
+
+    <input type="text" name="name" required placeholder="Name">
+
+    <!-- Template for seperate PDF inputs-->
+    <template id="fileTemplate">
+      <span>
+        <input type="file" name="pdf" accept=".pdf">
+        <button id="deleteRow" onclick="removeRow(); this.parentNode.remove();">X</button>
+        <br>
+      </span>
+    </template>
+
+    <!-- Container for pdf inputs -->
+    <div id="documentUploads">
+
+      <!-- Easy multi-upload for bulk -->
+      <!-- <input type="file" name="pdf" accept=".pdf" multiple> -->
+    </div>
+
+    <!-- Add button -->
+    <button id="addInput">Add File</button>
+
+    <button type="submit">Upload</button>
+
+  </form>
+
+  <div id="result"></div>
+
+  <script src="multi-upload.js"></script>
+
+</body>
+</html>

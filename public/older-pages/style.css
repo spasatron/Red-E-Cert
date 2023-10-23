@@ -1,0 +1,42 @@
+/* Basic CSS stylesheet for wiki style markdown */
+body {
+	margin: 0 auto;
+	max-width: 50em;
+	line-height: 2;
+	padding: 4em 1em;
+	color: #555;
+	font-family: "Helvetica", "Arial", sans-serif;
+	margin-top: 1em;
+	padding-top: 1em;
+}
+
+h1, h2, strong {
+	color: #333;
+}
+
+code, pre {
+	background: #eee;
+}
+
+code {
+	padding: 2px 4px;
+	vertical-align: text-bottom;
+}
+
+details > summary {
+  font-size: 120%;
+  font-weight: bold;
+}
+
+/* Wikipedia-style external links */
+a[href^="//"]:after, 
+a[href^="http://"]:after, 
+a[href^="https://"]:after {
+  content: url(http://upload.wikimedia.org/wikipedia/commons/6/64/Icon_External_Link.png);
+  margin: 0 0 0 5px;
+}
+
+/*footnotes tool tips*/
+sup#footnote {
+  font-style: italic;
+}

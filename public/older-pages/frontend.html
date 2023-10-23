@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Red-E-Certs</title>
+    
+    <!-- Bootstrap -->
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+  <body>
+
+    <div id="start-of-page"></div>
+    <!-- page content will generate here -->
+    <div id="end-of-page"></div>
+
+    <div class="page-controls">
+      <button type="button" class="btn btn-secondary" data-target="#upload-modal" data-toggle="modal">Upload Cert</button>
+      <button type="button" class="btn btn-secondary" onclick="addDummyCert()">(+ Dummy Cert)</button>
+    </div>
+
+    <!-- Page Layout -->
+    <template id="page-template">
+      <table class="cert-page">
+        <tr class="header" style="border: 5px dashed black">
+          <th><b>Name:</b><span id="user-name">{{name}}</span></th>
+          <th><b>E-mail:</b><a id="user-email" href="mailto:{{email}}">{{email}}</a></th>
+        </tr>
+        <tr>
+          <!-- Certs go here -->
+        </tr>
+      </table>
+      <div class="pagebreak"></div>
+    </template>
+
+    <!-- Template cert cell -->
+    <template id="cell-template">
+
+      <td class="cert-cell">
+        <div class="cert-wrapper">
+
+          <b id="name"></b><br>
+          <b id="issued"></b><br>
+          <img id="display-img" src="">
+
+          <div class="cert-edit-menu">
+            <div class="btn-group btn-group-lg btn-group-round">
+              <button class="btn btn-info" id="move-cert"onclick ="$(this).parent().parent().parent().children('.cert-move-menu').collapse('toggle')">Move</button>
+              <button class="btn btn-primary" id="edit-cert" data-toggle="modal" data-target="#edit-modal" onclick="setCropModalCanvas(this.parentNode.parentNode.parentNode)">Edit</button> 
+              <button class="btn btn-danger" id="remove-cert" disabled>Remove</button> <!-- TODO: Are you sure -->
+            </div>
+          </div>
+
+          <!-- TODO: actually move shit -->
+          <div class="cert-move-menu collapse">
+            <div class="btn-group btn-group-lg btn-group-round">
+              <button class="btn btn-secondary" id="edit-cert"><--</button> 
+              <button class="btn btn-success" id="move-cert" onclick="$(this).parent().parent().parent().children('.cert-move-menu').collapse('toggle')">OK</button>
+              <button class="btn btn-secondary" id="remove-cert">--></button>
+              
+            </div>
+            <br><b>This dont move shit rn</b>
+          </div>
+        </div>
+      </td>
+
+    </template>
+
+     <!-- Edit Modal -->
+    <div class="modal fade" id="edit-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+          <div class="modal-header">
+            <h5 class="modal-title" id="edit-modal-title">Edit Document</h5>
+            <button type="button" class="close" data-dismiss="modal" data-target="edit" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+          <div class="modal-body">
+            <div class="canvas-wrapper" style="display: block; border: 2px black;">
+              <canvas style="max-width:100%;" id="crop-canvas"/>
+            </div>
+            <form>
+              Document Name:* <input type="text" id="cert-name" required placeholder="Driver's License, EMT-B, S-212, etc."><br>
+              Document Number: <input type="text" id="cert-number" placeholder="Verification # (optional)"><br>
+              Issuing body <input type="text" id="cert-issued" placeholder="Sate, NWCG, USFS, etc."><br>
+              <i>* required</i>
+            </form>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal" data-target="edit-modal">Close</button>
+            <button type="button" class="btn btn-info" id="submit-btn">Crop</button>
+            <button type="button" class="btn btn-primary" id="save-btn" data-dismiss="modal" data-target="upload-modal">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upload Modal -->
+    <div class="modal fade" id="upload-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Upload Document</h5>
+            <button type="button" class="close" data-dismiss="modal" data-target="upload-modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+          <div class="modal-body">
+            <div class="canvas wrapper" style="display: block; border: 2px black;">
+              <img src="" id="canvas-src" style="display: none;">
+              <canvas style="max-width:100%;" id="modal-canvas"/>
+            </div>
+            <form action="/upload-document" method="POST" id="uploadForm" enctype="multipart/form-data">
+              Document Name: <input type="text" id="cert-name" required placeholder="Driver's License, EMT-B, S-212, etc."><br>
+              Document Number: <input type="text" id="cert-number" placeholder="Verification # (optional)"><br>
+              Issuing body: <input type="text" id="cert-issued" placeholder="Sate, NWCG, USFS, etc."><br>
+              PDF Document: <input id="file-upload" type="file" name="pdf" accept=".pdf"><br>
+            </form>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" data-target="upload-modal">Close</button>
+            <button type="button" class="btn btn-info" id="submit-btn">Upload</button>
+            <button type="button" class="btn btn-primary" id="save-btn" data-dismiss="modal" data-target="upload-modal">Add Cert</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="text/javascript" src="script.js"></script>
+  </body>
+  <footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  </footer>
+</html>
