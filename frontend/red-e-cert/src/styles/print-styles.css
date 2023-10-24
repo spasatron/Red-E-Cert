@@ -1,0 +1,12 @@
+@media print{
+    .to-print {
+        size: A4;
+        margin: 1cm; /* Set page margins */
+    }
+    @page{
+        size: landscape;
+    }
+    .hide-print {
+        display: none;
+    }
+}
