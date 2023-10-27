@@ -1,7 +1,7 @@
 @media print{
     .to-print {
         size: A4;
-        margin: 1cm; /* Set page margins */
+        /*margin: 1cm; /* Set page margins */
     }
     @page{
         size: landscape;
@@ -9,4 +9,9 @@
     .hide-print {
         display: none;
     }
+}
+.to-print {
+    height: 100%;
+    width: 100%;
+    padding: 0;
 }

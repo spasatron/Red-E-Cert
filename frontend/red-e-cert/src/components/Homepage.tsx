@@ -1,23 +1,11 @@
-import React, { useState } from "react";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 import Grid from "./Grid";
-import ImageUploadComponent from "./ImageUpload";
 
 interface Cell {
   id: string;
   content: string;
   imageData: string | null;
 }
-
-const initial = Array.from({ length: 0 }, (_v, k) => k).map((k) => {
-  const custom: Cell = {
-    id: `id-${k}`,
-    content: `Quote ${k}`,
-    imageData: null,
-  };
-
-  return custom;
-});
 
 const reorder = (
   list: Cell[],
@@ -31,9 +19,12 @@ const reorder = (
   return result;
 };
 
-const Homepage: React.FC = () => {
-  const [state, setState] = useState<{ cells: Cell[] }>({ cells: initial });
+interface HomepageProps {
+  state: { cells: Cell[] };
+  setState: (state: { cells: Cell[] }) => void;
+}
 
+const Homepage: React.FC<HomepageProps> = ({ state, setState }) => {
   function onDragEnd(result: DropResult) {
     if (!result.destination) {
       return;
@@ -52,30 +43,11 @@ const Homepage: React.FC = () => {
     setState({ cells });
   }
 
-  function loadImage(dataURL: string | null) {
-    if (dataURL) {
-      // Create a copy of the cells array
-      const newCells = [...state.cells];
-
-      newCells.push({
-        id: `id-${newCells.length}`,
-        content: `Quote ${newCells.length}`,
-        imageData: dataURL,
-      });
-
-      // Update the content of the first cell
-
-      setState({ cells: newCells });
-      return;
-    }
-  }
-
   return (
     <>
       <DragDropContext onDragEnd={onDragEnd}>
         <Grid imgInfoArr={state.cells} />
       </DragDropContext>
-      <ImageUploadComponent onImageUpload={loadImage} />
     </>
   );
 };
