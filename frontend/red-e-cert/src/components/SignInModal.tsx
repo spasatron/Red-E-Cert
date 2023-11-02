@@ -1,17 +1,15 @@
 import { useState } from "react";
 
-interface SignInModalProps {
-  onRequestClose: (name: string, email: string) => void;
-}
-
-const SignInModal: React.FC<SignInModalProps> = ({ onRequestClose }) => {
+function SignInModal() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
 
   const handleSignInDropBox = () => {
     // Early Development TODO Remove
     const client_id = encodeURIComponent("b8iisj0jc2bo1pe");
-    const redirect_uri = encodeURIComponent("http://localhost:5173/");
+    const redirect_uri = encodeURIComponent(
+      "http://localhost:5173/authenticate"
+    );
     const userInfo = {
       name: name,
       email: email,
@@ -22,11 +20,6 @@ const SignInModal: React.FC<SignInModalProps> = ({ onRequestClose }) => {
     // You can make an API call to authenticate the user
   };
 
-  const handleSignIn = () => {
-    onRequestClose(name, email);
-    // Add your sign-in logic here
-    // You can make an API call to authenticate the user
-  };
   return (
     <div className="signin-modal-wrapper">
       <div className="signin-modal">
@@ -50,12 +43,12 @@ const SignInModal: React.FC<SignInModalProps> = ({ onRequestClose }) => {
           </div>
           <div>
             <button onClick={handleSignInDropBox}>DropBox</button>
-            <button onClick={handleSignIn}>Quick Print</button>
+            <button onClick={() => {}}>Quick Print</button>
           </div>
         </form>
       </div>
     </div>
   );
-};
+}
 
 export default SignInModal;

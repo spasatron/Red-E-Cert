@@ -1,36 +1,21 @@
-import { useEffect, useRef, useState } from "react";
 import "./App.css";
-import DropBoxQR from "./components/DropBoxQR";
-import Homepage from "./components/Homepage";
 import "./styles/print-styles.css";
-import ImageUploadComponent from "./components/ImageUpload";
-import SignInModal from "./components/SignInModal";
+import { UserProvider } from "./contexts/userContext";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Homepage from "./components/Homepage";
+import Authenticate from "./components/Authenticate";
 
-interface Cell {
-  id: string;
-  content: string;
-  imageData: string | null;
-}
+// const initial = Array.from({ length: 0 }, (_v, k) => k).map((k) => {
+//   const custom: Cell = {
+//     id: `id-${k}`,
+//     content: `Quote ${k}`,
+//     imageData: null,
+//   };
 
-const initial = Array.from({ length: 0 }, (_v, k) => k).map((k) => {
-  const custom: Cell = {
-    id: `id-${k}`,
-    content: `Quote ${k}`,
-    imageData: null,
-  };
+//   return custom;
+// });
 
-  return custom;
-});
-
-async function validateToken(auth: string) {
-  const response = await fetch(
-    `http://127.0.0.1:8000/create-dropbox-session/${auth}`,
-    { method: "POST" }
-  );
-  const movies = await response.json();
-  console.log(movies);
-}
-
+/*
 function App() {
   const [state, setState] = useState<{ cells: Cell[] }>({ cells: initial });
   const [isSignInModalOpen, setSignInModalOpen] = useState<boolean>(true);
@@ -113,6 +98,20 @@ function App() {
         </div>
       )}
     </div>
+  );
+}
+*/
+
+function App() {
+  return (
+    <UserProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Homepage />} />
+          <Route path="/authenticate" element={<Authenticate />} />
+        </Routes>
+      </BrowserRouter>
+    </UserProvider>
   );
 }
 

@@ -6,7 +6,6 @@ interface User {
   // For example:
   name: string;
   email: string;
-
   // Add other properties as needed
 }
 

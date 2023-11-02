@@ -50,6 +50,13 @@ async def list_sessions():
     return session.list_active_sessions()
 
 
+@app.get("/verify-session")
+async def verify_session(session_id: str = Depends(verify_token)):
+    if session_id:
+        return "Token Valid"
+    return "Invalid Token"
+
+
 # Post Methods
 @app.post("/create-dropbox-session/{authCode}")
 async def process_auth_code(session_id: str = Depends(session.create_session)):

@@ -1,4 +1,4 @@
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import Depends, FastAPI, HTTPException, status, Header
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from pydantic import BaseModel
@@ -12,13 +12,20 @@ ALGORITHM = "HS256"
 # Token expiration time (in minutes)
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
-# OAuth2PasswordBearer security object
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
-
 
 # Pydantic model for user authentication
 class UserAuth(BaseModel):
     sessions_id: str
+
+
+# Get Token Header
+def get_current_token(authorization: str = Header(None)):
+    if authorization is None:
+        return None
+    if authorization.startswith("Bearer "):
+        token = authorization.split("Bearer ")[1]
+        return token
+    return None
 
 
 # Function to create an access token
@@ -34,18 +41,12 @@ def create_access_token(
 
 
 # Function to verify and decode a token
-def verify_token(token: str = Depends(oauth2_scheme)):
+def verify_token(token: str = Depends(get_current_token)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         session_id = payload.get("session_id")
         if session_id is None:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Could not validate credentials",
-            )
+            return None
     except JWTError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
-        )
+        return None
     return session_id
