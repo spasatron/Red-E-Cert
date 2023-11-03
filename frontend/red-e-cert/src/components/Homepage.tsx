@@ -1,6 +1,8 @@
 import { useUser } from "../contexts/userContext";
 import SignInModal from "./SignInModal";
-import Cookies from "js-cookie";
+import "../App.css";
+import { DummyCert } from "../assets/example_cert";
+import ImageUploadComponent from "./ImageUpload";
 // const reorder = (
 //   list: Cell[],
 //   startIndex: number,
@@ -45,28 +47,46 @@ import Cookies from "js-cookie";
 //     </>
 //   );
 // };
-async function checkSession() {
-  const response = await fetch(`http://localhost:8000/verify-session/`, {
-    method: "GET",
-    credentials: "include", // Include cookies in the request
-    headers: {
-      Authorization: "Bearer " + Cookies.get("authToken"), // Include the token as a Bearer token
-      "Content-Type": "application/json", // Set the appropriate content type
-      // Add other headers as needed
-    },
-  });
-  const data = await response.json();
-  console.log(data);
-}
 
 function Homepage() {
   const { user } = useUser();
   if (user) {
     return (
-      <div>
-        <h1>User Authenticated {user.name} Recognized</h1>
-        <button onClick={checkSession}></button>
-      </div>
+      <>
+        <table className="cert-page">
+          <tr className="header" style={{ border: "5px dashed white" }}>
+            <th>
+              <b>Name: </b>
+              <span id="user-name">{user.name}</span>
+            </th>
+            <th>
+              <b>E-mail: </b>
+              <a id="user-email" href="mailto:{{email}}">
+                {user.email}
+              </a>
+            </th>
+            <th>
+              <img width="75px" src={user.qr_src} />
+            </th>
+          </tr>
+          <tr>
+            {/*Certs go here*/}
+            <td className="cert-cell">
+              <div className="cert-wrapper">
+                <img id="display-img" src={DummyCert} />
+              </div>
+            </td>
+            <td>Test</td>
+            <td>
+              <ImageUploadComponent
+                onImageUpload={(dataURL: string | null) => {
+                  console.log(dataURL);
+                }}
+              />
+            </td>
+          </tr>
+        </table>
+      </>
     );
   } else {
     return <SignInModal />;

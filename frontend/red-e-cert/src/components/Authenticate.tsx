@@ -19,18 +19,31 @@ function Authenticate() {
         const userInfo = JSON.parse(decodeURIComponent(state));
 
         const response = await fetch(
-          `http://127.0.0.1:8000/create-dropbox-session/${authCode}`,
+          `http://localhost:8000/create-dropbox-session/${authCode}`,
           { method: "POST" }
         );
         const token = await response.json();
         console.log(token);
         Cookies.set("authToken", token, { expires: 1 / 48 });
+        const qr_src_response = await fetch(
+          `http://localhost:8000/get-qr-src`,
+          {
+            method: "GET",
+            credentials: "include",
+            headers: {
+              Authorization: "Bearer " + Cookies.get("authToken"), // Include the token as a Beare
+            },
+          }
+        );
+        const qr_src = await qr_src_response.json();
+
         // Send a request to your backend to validate the authentication code
         // and retrieve user information
         // Update the authentication state in your app with the user's information
         const authenticatedUser = {
           name: userInfo.name,
           email: userInfo.email,
+          qr_src: qr_src,
         };
         updateUser(authenticatedUser);
         navigate("/");

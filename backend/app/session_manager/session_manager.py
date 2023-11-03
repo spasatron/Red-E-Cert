@@ -73,4 +73,24 @@ class SessionManager:
         if session_id in self.sessions.keys():
             return self.sessions[session_id]
         else:
-            raise HTTPException(400, "Session Not Found")
+            raise HTTPException(404, "Session Not Found")
+
+    async def get_root_link(self, session_id: str):
+        session = await self.get_session(session_id=session_id)
+        if session.get("root-link"):
+            return session.get("root-link")
+        # Otherwise get current time for root
+        session["root-link"] = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        return session["root-link"]
+
+    async def get_file_upload_link(self, session_id: str):
+        root_link = await self.get_root_link(session_id)
+        session = await self.get_session(session_id)
+
+        dbx = session["dbx"]
+
+        commit_info = dropbox.files.CommitInfo(
+            path="/" + root_link + "/test.png", mode=dropbox.files.WriteMode.overwrite
+        )
+
+        return dbx.files_get_temporary_upload_link(commit_info).link

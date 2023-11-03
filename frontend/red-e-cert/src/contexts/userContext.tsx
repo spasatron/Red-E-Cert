@@ -6,6 +6,7 @@ interface User {
   // For example:
   name: string;
   email: string;
+  qr_src: string;
   // Add other properties as needed
 }
 
