@@ -1,9 +1,12 @@
 import { useState } from "react";
+import { useUser } from "../contexts/userContext";
+import { useNavigate } from "react-router-dom";
 
 function SignInModal() {
+  const { updateUser } = useUser();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-
+  const navigate = useNavigate();
   const handleSignInDropBox = () => {
     // Early Development TODO Remove
     const client_id = encodeURIComponent("b8iisj0jc2bo1pe");
@@ -43,7 +46,19 @@ function SignInModal() {
           </div>
           <div>
             <button onClick={handleSignInDropBox}>DropBox</button>
-            <button onClick={() => {}}>Quick Print</button>
+            <button
+              onClick={() => {
+                const authenticatedUser = {
+                  name: name,
+                  email: email,
+                  qr_src: "",
+                };
+                updateUser(authenticatedUser);
+                navigate("/");
+              }}
+            >
+              Quick Print
+            </button>
           </div>
         </form>
       </div>

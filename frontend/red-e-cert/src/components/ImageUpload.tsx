@@ -1,6 +1,7 @@
 import { ChangeEvent } from "react";
 import "../styles/print-styles.css";
 import Cookies from "js-cookie";
+import { useUser } from "../contexts/userContext";
 
 interface ImageUploadComponentProps {
   onImageUpload: (dataURL: string | null) => void;
@@ -48,6 +49,7 @@ async function uploadToDropbox(data: string) {
 const ImageUploadComponent: React.FC<ImageUploadComponentProps> = ({
   onImageUpload,
 }) => {
+  const { user } = useUser();
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
 
@@ -55,7 +57,9 @@ const ImageUploadComponent: React.FC<ImageUploadComponentProps> = ({
       const reader = new FileReader();
       reader.onload = (e) => {
         onImageUpload(e.target?.result as string);
-        uploadToDropbox(e.target?.result as string);
+        if (user?.qr_src) {
+          uploadToDropbox(e.target?.result as string);
+        }
       };
       reader.readAsDataURL(file);
     }

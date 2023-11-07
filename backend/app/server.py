@@ -8,22 +8,27 @@ import qrcode
 import io
 import base64
 
-from fastapi import FastAPI, BackgroundTasks, Depends, HTTPException
+from fastapi import FastAPI, BackgroundTasks, Depends, HTTPException, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
 import dropbox
 from dropbox.files import CommitInfo, WriteMode
 
+from pyppeteer import launch
+
 from app.session_manager.session_manager import SessionManager
 from app.session_manager.token_manager import create_access_token, verify_token
 
-app = FastAPI()
+
+app = FastAPI(
+    debug=True, max_request_size=1024 * 1024 * 100
+)  # Set to a larger value (100MB in this example))
 session = SessionManager()
 
 app.add_middleware(
     CORSMiddleware,
     # Replace '*' with the specific origins you want to allow
-    allow_origins=["*"],
+    allow_origins=["http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -96,7 +101,7 @@ async def get_qr_src(session_id: str = Depends(verify_token)):
 async def get_dropbox_upload_link(session_id: str = Depends(verify_token)):
     if session_id is None:
         raise HTTPException(405, "Unauthorized")
-    return await session.get_file_upload_link(session_id)
+    await session.get_file_upload_link(session_id)
 
 
 # Post Methods
@@ -104,3 +109,43 @@ async def get_dropbox_upload_link(session_id: str = Depends(verify_token)):
 async def process_auth_code(session_id: str = Depends(session.create_session)):
     session_data = {"session_id": session_id}
     return create_access_token(session_data)
+
+
+@app.post("/generate-pdf")
+async def generate_pdf(html_file: UploadFile = File(...)):
+    # Ensure the uploaded file is HTML
+    if not html_file.filename.endswith(".html"):
+        raise HTTPException(
+            status_code=400, detail="Invalid file format. Please provide an HTML file."
+        )
+
+    try:
+        # Launch a headless Chromium browser (pyppeteer) for PDF generation
+        browser = await launch()
+        page = await browser.newPage()
+
+        # Read and render the HTML content
+        html_content = await html_file.read()
+        html_content_str = html_content.decode("utf-8")
+        await page.setContent(html_content_str)
+
+        # Generate a PDF from the HTML content
+        pdf = await page.pdf(
+            {
+                "format": "A4",  # Page format (e.g., A4)
+                "landscape": True,  # Set to True for landscape orientation
+            }
+        )
+        # Close the browser
+        await browser.close()
+        with open("generated.pdf", "wb") as pdf_file:
+            pdf_file.write(pdf)
+        pdf_base64 = base64.b64encode(pdf).decode("utf-8")
+        return {"pdf_data": pdf_base64}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error generating PDF: {str(e)}")
+
+
+@app.post("/uploadfile")
+async def create_upload_file(html_file: UploadFile = File(...)):
+    return {"filename": html_file.filename}
