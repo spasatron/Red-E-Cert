@@ -107,28 +107,13 @@ function Homepage() {
     return (
       <div className="homepage-print">
         <style>
-          {`@media print {
-            .to-print {
-              size: A4;
-              /*margin: 1cm; /* Set page margins */
-            }
-            @page {
-              size: landscape;
-            }
-            .hide-print {
-              display: none;
-            }
-          }
+          {`
           .to-print {
             height: 100%;
             width: 100%;
             padding: 0;
           }
           
-          @page {
-            size: A4;
-            margin: .5cm;
-          }
 
           table {
             width: 100%;
@@ -137,7 +122,9 @@ function Homepage() {
             border: 5px dashed white;
             border-collapse: collapse;
           }
-
+          thead {
+            border: 5px solid white;
+          }
           td {
             border: 5px solid white;
             border-collapse: collapse;
@@ -186,12 +173,38 @@ function Homepage() {
 
           /*Page breaks for the printer*/
           @media print {
-              .pagebreak { page-break-before: always; }
+            .homepage-print {
+              size: A4;
+              /*margin: 1cm; /* Set page margins */
+            }
+            @page {
+              size: landscape;
+            }
+            .hide-print {
+              display: none;
+            }
+            table {
+              width: 100%;
+              max-height: 100%;
+              table-layout: fixed;
+              border: 5px dashed black;
+              border-collapse: collapse;
+            }
+  
+            td {
+              border: 5px solid black;
+              border-collapse: collapse;
+              width: 50%; /* For a 2xN table, each column should take 50% of the available width */
+            }
+            thead {
+              border: 5px dashed black; 
+            }
+            
           }`}
         </style>
         <table className="cert-page">
           <thead>
-            <tr className="header" style={{ border: "5px dashed white" }}>
+            <tr className="header">
               <th>
                 <b>Name: </b>
                 <span id="user-name">{user.name}</span>

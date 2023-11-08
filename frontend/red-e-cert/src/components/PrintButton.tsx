@@ -1,68 +1,47 @@
-import pako from "pako";
-function getBytesInString(str: string): Promise<number> {
-  return new Promise((resolve) => {
-    // Create a Blob from the string, specifying the UTF-8 encoding
-    const blob = new Blob([str], { type: "text/plain; charset=UTF-8" });
+import Cookies from "js-cookie";
 
-    // Create a FileReader to read the Blob
-    const reader = new FileReader();
+async function uploadToDropbox(data: string) {
+  // Convert base64 data to a Blob
+  console.log(data);
+  const base64ToBlob = (base64Data: string) => {
+    const byteCharacters = atob(base64Data);
+    console.log(byteCharacters);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    return new Blob([byteArray], { type: "application/pdf" });
+  };
 
-    // Define a callback to be executed when the FileReader finishes reading
-    reader.onload = () => {
-      // The reader.result contains the bytes
-      const arrayBuffer = reader.result as ArrayBuffer;
-      const bytes = new Uint8Array(arrayBuffer);
-      resolve(bytes.length);
-    };
+  const fileBlob = base64ToBlob(data);
+  const dropbox_link_respose = await fetch(
+    `http://localhost:8000/dropbox-upload-main-link`,
+    {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        Authorization: "Bearer " + Cookies.get("authToken"), // Include the token as a Beare
+        "Content-Type": "text/x-typescript",
+      },
+    }
+  );
+  const dropbox_link = await dropbox_link_respose.json();
+  console.log(dropbox_link);
 
-    // Start reading the Blob
-    reader.readAsArrayBuffer(blob);
+  const dropbox_upload_response = await fetch(dropbox_link, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/octet-stream",
+    },
+    body: fileBlob,
   });
+
+  const dropbox_upload = await dropbox_upload_response.json();
+  console.log(dropbox_upload);
 }
 
 function PrintButton() {
-  //   const printScreen = () => {
-  //     const doc = new jsPDF();
-  //     console.log("Printing");
-  //     // Convert the HTML content into a string
-  //     const html = document.querySelector(".homepage-print");
-  //     console.log(html);
-  //     if (html) {
-  //       // Clone the HTML element to avoid modifying the actual document
-  //       const htmlClone = html.cloneNode(true) as HTMLHtmlElement;
-
-  //       // Hide elements with a specific class name (e.g., "hidden-on-pdf")
-  //       const elementsToHide = htmlClone.querySelectorAll(".hide-print");
-  //       elementsToHide.forEach((element) => {
-  //         if (element instanceof HTMLElement) {
-  //           element.style.display = "none";
-  //         }
-  //       });
-
-  //       // Set text color to black for all text elements
-  //       const textElements = htmlClone.querySelectorAll("td");
-  //       textElements.forEach((element) => {
-  //         if (element instanceof HTMLElement) {
-  //           element.style.color = "black";
-  //         }
-  //       });
-
-  //       const htmlDocument = htmlClone.outerHTML;
-
-  //       // Add HTML content to the PDF
-  //       doc.html(htmlDocument, {
-  //         callback: function (pdf) {
-  //           // Generate a base64 version of the PDF
-  //           var pdfBase64 = pdf.output("datauristring");
-
-  //           // Log the PDF data in the console
-  //           console.log(pdfBase64);
-  //           pdf.save("sample.pdf");
-  //         },
-  //       });
-  //     }
-  //   };
-
   const printScreen = async () => {
     // Find the element with the specified class name
     const toPrintElement = document.querySelector(".homepage-print");
@@ -70,12 +49,7 @@ function PrintButton() {
     if (toPrintElement) {
       // Extract the HTML content from the element
       const extractedHtml = toPrintElement.outerHTML;
-      const compressed = pako.deflate(extractedHtml);
-      console.log(
-        "Uncompressed Size",
-        getBytesInString(extractedHtml.toString())
-      );
-      console.log("Compressed Size:", compressed.byteLength);
+
       const blob = new Blob([extractedHtml], { type: "text/html" });
       const file = new File([blob], "document.html", { type: "text/html" });
 
@@ -90,10 +64,16 @@ function PrintButton() {
       });
       const response_data = await response_pdf.json();
       console.log(response_data);
+
+      await uploadToDropbox(response_data);
     }
   };
   return (
-    <button className="print-button hide-print" onClick={printScreen}>
+    <button
+      type="submit"
+      className="print-button hide-print"
+      onClick={printScreen}
+    >
       Print
     </button>
   );

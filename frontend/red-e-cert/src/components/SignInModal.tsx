@@ -45,8 +45,11 @@ function SignInModal() {
             />
           </div>
           <div>
-            <button onClick={handleSignInDropBox}>DropBox</button>
+            <button type="submit" onClick={handleSignInDropBox}>
+              DropBox
+            </button>
             <button
+              type="submit"
               onClick={() => {
                 const authenticatedUser = {
                   name: name,

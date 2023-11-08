@@ -83,14 +83,19 @@ class SessionManager:
         session["root-link"] = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         return session["root-link"]
 
-    async def get_file_upload_link(self, session_id: str):
+    async def get_file_upload_link(self, session_id: str, file_name=None):
         root_link = await self.get_root_link(session_id)
         session = await self.get_session(session_id)
 
         dbx = session["dbx"]
-
-        commit_info = dropbox.files.CommitInfo(
-            path="/" + root_link + "/test.png", mode=dropbox.files.WriteMode.overwrite
-        )
-
+        if file_name is None:
+            commit_info = dropbox.files.CommitInfo(
+                path="/" + root_link + "/test.png",
+                mode=dropbox.files.WriteMode.overwrite,
+            )
+        else:
+            commit_info = dropbox.files.CommitInfo(
+                path="/" + root_link + "/" + file_name,
+                mode=dropbox.files.WriteMode.overwrite,
+            )
         return dbx.files_get_temporary_upload_link(commit_info).link

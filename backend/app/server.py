@@ -101,7 +101,16 @@ async def get_qr_src(session_id: str = Depends(verify_token)):
 async def get_dropbox_upload_link(session_id: str = Depends(verify_token)):
     if session_id is None:
         raise HTTPException(405, "Unauthorized")
-    await session.get_file_upload_link(session_id)
+    link = await session.get_file_upload_link(session_id)
+    return link
+
+
+@app.get("/dropbox-upload-main-link")
+async def get_dropbox_main_link(session_id: str = Depends(verify_token)):
+    if session_id is None:
+        raise HTTPException(405, "Unauthorized")
+    link = await session.get_file_upload_link(session_id, file_name="main.pdf")
+    return link
 
 
 # Post Methods
@@ -130,18 +139,13 @@ async def generate_pdf(html_file: UploadFile = File(...)):
         await page.setContent(html_content_str)
 
         # Generate a PDF from the HTML content
-        pdf = await page.pdf(
-            {
-                "format": "A4",  # Page format (e.g., A4)
-                "landscape": True,  # Set to True for landscape orientation
-            }
-        )
+        pdf = await page.pdf()
         # Close the browser
         await browser.close()
         with open("generated.pdf", "wb") as pdf_file:
             pdf_file.write(pdf)
-        pdf_base64 = base64.b64encode(pdf).decode("utf-8")
-        return {"pdf_data": pdf_base64}
+        pdf_base64 = base64.b64encode(pdf).decode()
+        return pdf_base64
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating PDF: {str(e)}")
 

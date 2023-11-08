@@ -119,12 +119,6 @@ html, body{
 
 /* Jack's CSS */
 
-
-@page {
-  size: A4;
-  margin: .5cm;
-}
-
 table {
   width: 100%;
   max-height: 100%;

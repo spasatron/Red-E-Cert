@@ -28,6 +28,7 @@ async function uploadToDropbox(data: string) {
       credentials: "include",
       headers: {
         Authorization: "Bearer " + Cookies.get("authToken"), // Include the token as a Beare
+        "Content-Type": "text/x-typescript",
       },
     }
   );
