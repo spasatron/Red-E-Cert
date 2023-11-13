@@ -74,6 +74,7 @@ function Homepage() {
             <img
               className="cell-img"
               src={cell.imageData ? cell.imageData : ""}
+              alt="Failed To Load"
             />
           </td>
         ));
@@ -82,9 +83,13 @@ function Homepage() {
         endIndex != entriesPerRow * maxRows
       ) {
         rowCells.push(
-          <td key={"uploadComponent"}>
+          <td
+            key={"uploadComponent"}
+            className="remove-in-render"
+            style={{ border: "5px dashed white" }}
+          >
             <ImageUploadComponent
-              onImageUpload={(dataURL: string | null) => {
+              setImageData={(dataURL: string | null) => {
                 const newCellState = [...cellState];
                 newCellState.push({
                   id: "test",
@@ -106,7 +111,7 @@ function Homepage() {
   if (user) {
     return (
       <div className="homepage-print">
-        <style>
+        {/* <style>
           {`
           .to-print {
             height: 100%;
@@ -128,7 +133,7 @@ function Homepage() {
           td {
             border: 5px solid white;
             border-collapse: collapse;
-            width: 50%; /* For a 2xN table, each column should take 50% of the available width */
+            width: 50%;
           }
 
           .cert-cell {
@@ -171,11 +176,10 @@ function Homepage() {
             background-color: limegreen;
           }
 
-          /*Page breaks for the printer*/
           @media print {
             .homepage-print {
               size: A4;
-              /*margin: 1cm; /* Set page margins */
+
             }
             @page {
               size: landscape;
@@ -194,17 +198,18 @@ function Homepage() {
             td {
               border: 5px solid black;
               border-collapse: collapse;
-              width: 50%; /* For a 2xN table, each column should take 50% of the available width */
+              width: 50%;
+              max-height: 50%;
             }
             thead {
               border: 5px dashed black; 
             }
             
           }`}
-        </style>
+        </style> */}
         <table className="cert-page">
-          <thead>
-            <tr className="header">
+          <thead className="cert-header">
+            <tr>
               <th>
                 <b>Name: </b>
                 <span id="user-name">{user.name}</span>
@@ -220,7 +225,7 @@ function Homepage() {
               </th>
             </tr>
           </thead>
-          <tbody>{renderCerts()}</tbody>
+          <tbody className="cert-grid">{renderCerts()}</tbody>
         </table>
         <PrintButton />
       </div>

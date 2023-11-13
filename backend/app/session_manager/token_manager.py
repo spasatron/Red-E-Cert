@@ -19,7 +19,7 @@ class UserAuth(BaseModel):
 
 
 # Get Token Header
-def get_current_token(authorization: str = Header(None)):
+def get_current_token(authorization: str = Header(...)):
     if authorization is None:
         return None
     if authorization.startswith("Bearer "):

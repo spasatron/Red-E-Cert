@@ -5,97 +5,12 @@ html, body{
 }
 
 
-
 #root {
   margin: 0 auto;
   padding: 0;
   text-align: center;
   height: 100%;
   width: 100%;
-}
-
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
-
-.side-bar{
-  word-wrap: break-word; /* Allow words to break and wrap */
-  overflow: hidden; /* Hide text that overflows */
-  text-overflow: ellipsis; /* Add an ellipsis (...) to indicate text overflow */
-}
-
-
-.grid-cell {
-  background-color: lightblue;
-  height: 100%;
-  width: 100%;
-}
-
-.grid-row{
-  display: grid;
-  grid-gap: 16px;
-  margin-left: 20px;
-  margin-right: 20px;
-}
-
-
-.grid-container {
-  display: grid;
-  grid-gap: 16px;
-  height: 100%;
-  grid-template-rows: auto auto;
-}
-
-.grid-item {
-  border: 1px solid #ccc;
-  padding: 16px;
-}
-
-.grid-center {
-  width: 100%;
-  height: 98%;
-  margin-top: 5px;
-}
-.print-grid {
-  display: grid;
-  height: 100%;
-  width: 100%;
-  display: grid; 
-  grid-template-columns: 12% 88%;
-  gap: 0px 0px; 
 }
 
 .signin-modal-wrapper {
@@ -116,30 +31,102 @@ html, body{
   padding: 20px;
 }
 
+/*-- Table Format Options --*/
+.homepage-print {
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+}
+
+.cert-page {
+  width: 100%;
+  height: 100%;
+  table-layout: fixed;
+  /*border: 5px dashed white;*/
+  border-collapse: collapse;
+  box-sizing: border-box;
+
+}
+
+.cert-header {
+  box-sizing: border-box;
+  display: table;
+  width: 100%;
+  height: 5%;
+}
+
+.cert-header > tr {
+  display: flex;
+  box-sizing: border-box;
+  border: 5px solid white;
+  height: 100%;
+}
+
+.cert-header > tr > th {
+  flex: 1;
+  width: 33vw;
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  align-items: center; /* Vertical centering */
+  justify-content: center; /* Horizontal centering */
+}
+
+.cert-grid {
+  display: table;
+  box-sizing: border-box;
+  width: 100%;
+  height: 95%; /* Allocate 90% of the available height to .cert-grid */
+}
+
+.cert-grid > tr {
+  display: flex;
+  height: 50%;
+  width: 100vw;
+}
+
+.cert-grid > tr > td {
+  flex: 1;
+  width: 33.33%;
+  box-sizing: border-box;
+  border: 5px solid white;
+  position: relative;
+}
+
+
+.cert-grid > tr > td img {
+  max-width: 95%;
+  max-height: 95%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.center{
+  height: 100%;
+  display: flex;
+  align-items: center; /* Vertical centering */
+  justify-content: center; /* Horizontal centering */
+}
+
+/* .cert-wrapper {
+  height: 25%;
+}
+
+.cert-wrapper img{
+
+  overflow: hidden;
+
+} */
 
 /* Jack's CSS */
 
-table {
-  width: 100%;
-  max-height: 100%;
-  table-layout: fixed;
-  border: 5px dashed white;
-  border-collapse: collapse;
-}
 
-td {
-  border: 5px solid white;
-  border-collapse: collapse;
-  width: 50%; /* For a 2xN table, each column should take 50% of the available width */
-}
-
-.cert-cell {
+/* .cert-cell {
   padding: 10px;
 }
 
-.cert-wrapper {
-  position: relative;
-}
 
 .cert-wrapper img {
   max-width: 100%;
@@ -164,7 +151,7 @@ td {
   position: absolute;
   top: 0;
   left: 0;
-}
+} */
 
 .print-button{
   position: absolute;

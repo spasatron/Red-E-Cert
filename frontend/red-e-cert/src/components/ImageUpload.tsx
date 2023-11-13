@@ -1,74 +1,56 @@
-import { ChangeEvent } from "react";
 import "../styles/print-styles.css";
-import Cookies from "js-cookie";
-import { useUser } from "../contexts/userContext";
+import { uploadToDropbox, getDropboxUploadURI } from "../utils/dropboxUploader";
+import { ChangeEvent } from "react";
+import { getFilePreview } from "../utils/fileUtils";
+
+const handleFileSelect = (
+  setImageData: (dataURL: string | null) => void,
+  event: ChangeEvent<HTMLInputElement>
+) => {
+  const selectedFile = event.target.files?.[0];
+
+  if (selectedFile) {
+    const reader = new FileReader();
+    reader.onload = async (event: ProgressEvent<FileReader>) => {
+      const arrayBuffer = event.target?.result as ArrayBuffer;
+
+      const imageData = await getFilePreview(
+        arrayBuffer,
+        selectedFile.type,
+        (error: Error) => {
+          console.log(error.message);
+        }
+      );
+      if (imageData) {
+        setImageData(imageData);
+      }
+
+      const dropbox_uri = await getDropboxUploadURI(selectedFile);
+      if (dropbox_uri) {
+        const blob = new Blob([arrayBuffer], { type: selectedFile.type });
+        uploadToDropbox(dropbox_uri, blob);
+      }
+    };
+    reader.readAsArrayBuffer(selectedFile);
+  }
+};
 
 interface ImageUploadComponentProps {
-  onImageUpload: (dataURL: string | null) => void;
-}
-
-async function uploadToDropbox(data: string) {
-  // Convert base64 data to a Blob
-  console.log(data);
-  const base64ToBlob = (base64Data: string) => {
-    const byteCharacters = atob(base64Data);
-    const byteNumbers = new Array(byteCharacters.length);
-    for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i);
-    }
-    const byteArray = new Uint8Array(byteNumbers);
-    return new Blob([byteArray], { type: "application/octet-stream" });
-  };
-
-  const fileBlob = base64ToBlob(data.split(",")[1]);
-  const dropbox_link_respose = await fetch(
-    `http://localhost:8000/dropbox-upload-link`,
-    {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        Authorization: "Bearer " + Cookies.get("authToken"), // Include the token as a Beare
-        "Content-Type": "text/x-typescript",
-      },
-    }
-  );
-  const dropbox_link = await dropbox_link_respose.json();
-  console.log(dropbox_link);
-
-  const dropbox_upload_response = await fetch(dropbox_link, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/octet-stream",
-    },
-    body: fileBlob,
-  });
-
-  const dropbox_upload = await dropbox_upload_response.json();
-  console.log(dropbox_upload);
+  setImageData: (dataURL: string | null) => void;
 }
 
 const ImageUploadComponent: React.FC<ImageUploadComponentProps> = ({
-  onImageUpload,
+  setImageData,
 }) => {
-  const { user } = useUser();
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        onImageUpload(e.target?.result as string);
-        if (user?.qr_src) {
-          uploadToDropbox(e.target?.result as string);
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   return (
-    <div className="hide-print">
-      <input type="file" accept="image/*" onChange={handleFileChange} />
+    <div className="hide-print center">
+      <input
+        type="file"
+        accept="image/*, application/pdf"
+        onInput={(event: ChangeEvent<HTMLInputElement>) =>
+          handleFileSelect(setImageData, event)
+        }
+      />
     </div>
   );
 };

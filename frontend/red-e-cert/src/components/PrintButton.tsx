@@ -1,4 +1,4 @@
-import Cookies from "js-cookie";
+import * as Cookies from "js-cookie";
 
 async function uploadToDropbox(data: string) {
   // Convert base64 data to a Blob
