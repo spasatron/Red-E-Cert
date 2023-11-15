@@ -52,7 +52,7 @@ class SessionManager:
             "client_secret": APP_SECRET,
         }
 
-        response = requests.post(dropbox_endpoint, data=params)
+        response = requests.post(dropbox_endpoint, data=params, timeout=10)
 
         if response.status_code == 200:
             # add info to current sessions
@@ -99,3 +99,13 @@ class SessionManager:
                 mode=dropbox.files.WriteMode.overwrite,
             )
         return dbx.files_get_temporary_upload_link(commit_info).link
+
+    async def check_if_file_exists(self, session_id: str, filename: str) -> bool:
+        session = await self.get_session(session_id)
+        root_link = await self.get_root_link(session_id)
+        dbx = session["dbx"]
+        try:
+            dbx.files_get_metadata("/" + root_link + "/" + filename)
+            return True
+        except:
+            return False

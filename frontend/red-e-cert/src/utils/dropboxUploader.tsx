@@ -1,4 +1,4 @@
-import * as Cookies from "js-cookie";
+import Cookies from "js-cookie";
 
 export async function uploadToDropbox(
   uri: string,
@@ -34,13 +34,13 @@ export async function getDropboxUploadURI(
     const dropbox_link_respose = await fetch(
       `http://localhost:8000/dropbox-upload-link`,
       {
-        method: "GET",
+        method: "POST",
         credentials: "include",
         headers: {
           Authorization: "Bearer " + Cookies.get("authToken"), // Include the token as a Beare
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ fileName: file.name }),
+        body: JSON.stringify({ filename: file.name }),
       }
     );
     if (!dropbox_link_respose.ok) {

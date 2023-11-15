@@ -1,6 +1,7 @@
 """ Entry Point for server """
-
 import uvicorn
+
+# pylint: disable-next=unused-import
 from app.server import app
 
 

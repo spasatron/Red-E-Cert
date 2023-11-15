@@ -1,23 +1,22 @@
 """ Fast Api Server"""
-
-import os
-import datetime
-import asyncio
-import requests
-import qrcode
 import io
 import base64
 
-from fastapi import FastAPI, BackgroundTasks, Depends, HTTPException, File, UploadFile
+import datetime
+import asyncio
+
+import qrcode
+
+
+from fastapi import FastAPI, Request, Depends, HTTPException, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
-import dropbox
-from dropbox.files import CommitInfo, WriteMode
 
 from pyppeteer import launch
 
-from app.session_manager.session_manager import SessionManager
-from app.session_manager.token_manager import create_access_token, verify_token
+from .session_manager.session_manager import SessionManager
+from .session_manager.token_manager import create_access_token, verify_token
+from .tools.utils import generate_unique_filename
 
 
 app = FastAPI(
@@ -97,14 +96,6 @@ async def get_qr_src(session_id: str = Depends(verify_token)):
     return "data:image/png; base64," + base64_image
 
 
-@app.get("/dropbox-upload-link")
-async def get_dropbox_upload_link(session_id: str = Depends(verify_token)):
-    if session_id is None:
-        raise HTTPException(405, "Unauthorized")
-    link = await session.get_file_upload_link(session_id)
-    return link
-
-
 @app.get("/dropbox-upload-main-link")
 async def get_dropbox_main_link(session_id: str = Depends(verify_token)):
     if session_id is None:
@@ -118,6 +109,25 @@ async def get_dropbox_main_link(session_id: str = Depends(verify_token)):
 async def process_auth_code(session_id: str = Depends(session.create_session)):
     session_data = {"session_id": session_id}
     return create_access_token(session_data)
+
+
+@app.post("/dropbox-upload-link")
+async def get_dropbox_upload_link(
+    request: Request, session_id: str = Depends(verify_token)
+):
+    if session_id is None:
+        raise HTTPException(405, "Unauthorized")
+
+    request_body = await request.json()
+
+    filename = request_body.get("filename")
+
+    unique_filename = await generate_unique_filename(
+        filename, lambda file: session.check_if_file_exists(session_id, file)
+    )
+
+    link = await session.get_file_upload_link(session_id, file_name=unique_filename)
+    return link
 
 
 @app.post("/generate-pdf")
@@ -147,6 +157,7 @@ async def generate_pdf(html_file: UploadFile = File(...)):
         pdf_base64 = base64.b64encode(pdf).decode()
         return pdf_base64
     except Exception as e:
+        # pylint: disable-next=raise-missing-from
         raise HTTPException(status_code=500, detail=f"Error generating PDF: {str(e)}")
 
 

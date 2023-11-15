@@ -111,102 +111,104 @@ function Homepage() {
   if (user) {
     return (
       <div className="homepage-print">
-        {/* <style>
-          {`
-          .to-print {
-            height: 100%;
-            width: 100%;
-            padding: 0;
-          }
-          
-
-          table {
-            width: 100%;
-            max-height: 100%;
-            table-layout: fixed;
-            border: 5px dashed white;
-            border-collapse: collapse;
-          }
-          thead {
-            border: 5px solid white;
-          }
-          td {
-            border: 5px solid white;
-            border-collapse: collapse;
-            width: 50%;
-          }
-
-          .cert-cell {
-            padding: 10px;
-          }
-
-          .cert-wrapper {
-            position: relative;
-          }
-
-          .cert-wrapper img {
-            max-width: 100%;
-            max-height: 100%;
-          }
-
-          .cert-edit-menu {
-            display: none;
-          }
-
-          .cert-wrapper:hover .cert-edit-menu {
-            display: block;
-          }
-
-          .cert-edit-menu {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-          }
-
-          .cert-move-menu {
-            position: absolute;
-            top: 0;
-            left: 0;
-          }
-
-          .print-button{
-            position: absolute;
-            bottom: 1rem;
-            left: 1rem;
-            background-color: limegreen;
-          }
-
-          @media print {
+        {
+          <style>
+            {`
             .homepage-print {
-              size: A4;
+              position: absolute;
+              height: 100vh;
+              width: 100vw;
+            }
+
+            .cert-page {
+              width: 100%;
+              height: 100%;
+              display: flex;
+              flex-direction: column;
+              /*border: 5px dashed white;*/
+              border-collapse: collapse;
+              box-sizing: border-box;
 
             }
-            @page {
-              size: landscape;
-            }
-            .hide-print {
-              display: none;
-            }
-            table {
+
+            .cert-header {
+              box-sizing: border-box;
+              display: flex;
               width: 100%;
-              max-height: 100%;
-              table-layout: fixed;
-              border: 5px dashed black;
-              border-collapse: collapse;
+              height: 8%;
             }
-  
-            td {
-              border: 5px solid black;
-              border-collapse: collapse;
-              width: 50%;
-              max-height: 50%;
+
+            .cert-header > tr {
+              display: flex;
+              box-sizing: border-box;
+              border: 5px solid white;
+              height: 100%;
+              width: 100%;
             }
-            thead {
-              border: 5px dashed black; 
+
+            .cert-header > tr > th {
+              flex: 1;
+              width: 33vw;
+              box-sizing: border-box;
+              position: relative;
+              display: flex;
+              align-items: center; /* Vertical centering */
+              justify-content: center; /* Horizontal centering */
             }
-            
+
+            .cert-grid {
+              display: flex;
+              flex-direction: column;
+              box-sizing: border-box;
+              width: 100%;
+              height: 92%; /* Allocate 90% of the available height to .cert-grid */
+            }
+
+            .cert-grid > tr {
+              display: flex;
+              height: 50%;
+              width: 100vw;
+            }
+
+            .cert-grid > tr > td {
+              flex: 1;
+              width: 33.33%;
+              box-sizing: border-box;
+              border: 5px solid white;
+              position: relative;
+            }
+
+
+            .cert-grid > tr > td img {
+              max-width: 98%;
+              max-height: 98%;
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+            }
+
+            .center{
+              height: 100%;
+              display: flex;
+              align-items: center; /* Vertical centering */
+              justify-content: center; /* Horizontal centering */
+            }
+
+            @media print {
+              .homepage-print {
+                size: A4;
+
+              }
+              @page {
+                size: landscape;
+              }
+              .hide-print {
+                display: none;
+              }
           }`}
-        </style> */}
+          </style>
+        }
         <table className="cert-page">
           <thead className="cert-header">
             <tr>

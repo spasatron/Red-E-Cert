@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { MouseEventHandler, useState } from "react";
 import { useUser } from "../contexts/userContext";
 import { useNavigate } from "react-router-dom";
 
@@ -7,7 +7,8 @@ function SignInModal() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
-  const handleSignInDropBox = () => {
+  const handleSignInDropBox: MouseEventHandler<HTMLButtonElement> = (event) => {
+    event.preventDefault();
     // Early Development TODO Remove
     const client_id = encodeURIComponent("b8iisj0jc2bo1pe");
     const redirect_uri = encodeURIComponent(

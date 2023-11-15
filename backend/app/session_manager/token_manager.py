@@ -1,9 +1,11 @@
-from fastapi import Depends, FastAPI, HTTPException, status, Header
-from fastapi.security import OAuth2PasswordBearer
-from jose import JWTError, jwt
-from pydantic import BaseModel
 from datetime import datetime, timedelta
-from passlib.context import CryptContext
+
+from fastapi import Depends, Header
+
+from pydantic import BaseModel
+
+from jose import JWTError, jwt
+
 
 # TODO Change
 SECRET_KEY = "dev-secret-key"

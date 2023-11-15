@@ -3,35 +3,51 @@ import { uploadToDropbox, getDropboxUploadURI } from "../utils/dropboxUploader";
 import { ChangeEvent } from "react";
 import { getFilePreview } from "../utils/fileUtils";
 
-const handleFileSelect = (
+const readArrayBufferFromFile = (file: File): Promise<ArrayBuffer> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const arrayBuffer = event.target?.result as ArrayBuffer;
+      if (arrayBuffer) {
+        resolve(arrayBuffer);
+      } else {
+        reject(new Error("Failed to read ArrayBuffer"));
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  });
+};
+
+const handleFileSelect = async (
   setImageData: (dataURL: string | null) => void,
   event: ChangeEvent<HTMLInputElement>
 ) => {
   const selectedFile = event.target.files?.[0];
 
   if (selectedFile) {
-    const reader = new FileReader();
-    reader.onload = async (event: ProgressEvent<FileReader>) => {
-      const arrayBuffer = event.target?.result as ArrayBuffer;
+    const arrayBuffer = await readArrayBufferFromFile(selectedFile);
 
-      const imageData = await getFilePreview(
-        arrayBuffer,
-        selectedFile.type,
-        (error: Error) => {
-          console.log(error.message);
-        }
+    const dropbox_uri = await getDropboxUploadURI(
+      selectedFile,
+      (error: Error) => console.log(error.message)
+    );
+
+    if (dropbox_uri) {
+      const blob = new Blob([arrayBuffer], { type: selectedFile.type });
+      await uploadToDropbox(dropbox_uri, blob, undefined, (error: Error) =>
+        console.log(error.message)
       );
-      if (imageData) {
-        setImageData(imageData);
+    }
+    const imageData = await getFilePreview(
+      arrayBuffer,
+      selectedFile.type,
+      (error: Error) => {
+        console.log(error.message);
       }
-
-      const dropbox_uri = await getDropboxUploadURI(selectedFile);
-      if (dropbox_uri) {
-        const blob = new Blob([arrayBuffer], { type: selectedFile.type });
-        uploadToDropbox(dropbox_uri, blob);
-      }
-    };
-    reader.readAsArrayBuffer(selectedFile);
+    );
+    if (imageData) {
+      setImageData(imageData);
+    }
   }
 };
 
