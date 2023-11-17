@@ -12,7 +12,7 @@ function SignInModal() {
     // Early Development TODO Remove
     const client_id = encodeURIComponent("b8iisj0jc2bo1pe");
     const redirect_uri = encodeURIComponent(
-      "http:/http://165.140.242.95:8080/authenticate"
+      "https://165.140.242.95/authenticate"
     );
     const userInfo = {
       name: name,
