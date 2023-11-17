@@ -48,7 +48,7 @@ class SessionManager:
             "code": authCode,
             "grant_type": "authorization_code",
             "client_id": APP_KEY,
-            "redirect_uri": "http://localhost:5173/authenticate",
+            "redirect_uri": "https://165.140.242.95/authenticate",
             "client_secret": APP_SECRET,
         }
 
