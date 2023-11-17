@@ -152,8 +152,7 @@ async def generate_pdf(html_file: UploadFile = File(...)):
         pdf = await page.pdf()
         # Close the browser
         await browser.close()
-        with open("generated.pdf", "wb") as pdf_file:
-            pdf_file.write(pdf)
+
         pdf_base64 = base64.b64encode(pdf).decode()
         return pdf_base64
     except Exception as e:
