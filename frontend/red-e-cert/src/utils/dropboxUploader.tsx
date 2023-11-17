@@ -32,7 +32,7 @@ export async function getDropboxUploadURI(
 ): Promise<string | undefined> {
   try {
     const dropbox_link_respose = await fetch(
-      `http://localhost:8000/dropbox-upload-link`,
+      `https://165.140.242.95:8080/dropbox-upload-link`,
       {
         method: "POST",
         credentials: "include",

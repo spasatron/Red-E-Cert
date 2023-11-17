@@ -19,14 +19,14 @@ function Authenticate() {
         const userInfo = JSON.parse(decodeURIComponent(state));
 
         const response = await fetch(
-          `http://localhost:8000/create-dropbox-session/${authCode}`,
+          `https://165.140.242.95:8080/create-dropbox-session/${authCode}`,
           { method: "POST" }
         );
         const token = await response.json();
         console.log(token);
         Cookies.set("authToken", token, { expires: 1 / 48 });
         const qr_src_response = await fetch(
-          `http://localhost:8000/get-qr-src`,
+          `https://165.140.242.95:8080/get-qr-src`,
           {
             method: "GET",
             credentials: "include",

@@ -16,7 +16,7 @@ async function uploadToDropbox(data: string) {
 
   const fileBlob = base64ToBlob(data);
   const dropbox_link_respose = await fetch(
-    `http://localhost:8000/dropbox-upload-main-link`,
+    `https://165.140.242.95:8080/dropbox-upload-main-link`,
     {
       method: "GET",
       credentials: "include",
@@ -57,11 +57,14 @@ function PrintButton() {
       formData.append("html_file", file);
       console.log("Getting Repsonse");
       console.log(file);
-      const response_pdf = await fetch(`http://localhost:8000/generate-pdf`, {
-        method: "POST",
-        credentials: "include",
-        body: formData,
-      });
+      const response_pdf = await fetch(
+        `https://165.140.242.95:8080/generate-pdf`,
+        {
+          method: "POST",
+          credentials: "include",
+          body: formData,
+        }
+      );
       const response_data = await response_pdf.json();
       console.log(response_data);
 
