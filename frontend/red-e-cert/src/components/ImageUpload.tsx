@@ -2,6 +2,8 @@ import "../styles/print-styles.css";
 import { uploadToDropbox, getDropboxUploadURI } from "../utils/dropboxUploader";
 import { ChangeEvent } from "react";
 import { getFilePreview } from "../utils/fileUtils";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const readArrayBufferFromFile = (file: File): Promise<ArrayBuffer> => {
   return new Promise((resolve, reject) => {
@@ -34,8 +36,15 @@ const handleFileSelect = async (
 
     if (dropbox_uri) {
       const blob = new Blob([arrayBuffer], { type: selectedFile.type });
-      await uploadToDropbox(dropbox_uri, blob, undefined, (error: Error) =>
-        console.log(error.message)
+      await toast.promise(
+        uploadToDropbox(dropbox_uri, blob, undefined, (error: Error) =>
+          console.log(error.message)
+        ),
+        {
+          pending: "Uploading File to Dropbox",
+          success: "Upload to Dropbox Successful",
+          error: "Upload Failed",
+        }
       );
     }
     const imageData = await getFilePreview(

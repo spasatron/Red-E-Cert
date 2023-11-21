@@ -10,9 +10,11 @@ function SignInModal() {
   const handleSignInDropBox: MouseEventHandler<HTMLButtonElement> = (event) => {
     event.preventDefault();
     // Early Development TODO Remove
+    console.log(import.meta.env.VITE_SIGNIN_DROPBOX_REDIRECT_URI);
     const client_id = encodeURIComponent("b8iisj0jc2bo1pe");
     const redirect_uri = encodeURIComponent(
-      "https://165.140.242.95/authenticate"
+      import.meta.env.VITE_SIGNIN_DROPBOX_REDIRECT_URI ||
+        "http://localhost:8080/authenticate"
     );
     const userInfo = {
       name: name,

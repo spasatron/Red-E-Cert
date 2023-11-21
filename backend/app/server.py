@@ -20,7 +20,7 @@ from .tools.utils import generate_unique_filename
 
 
 app = FastAPI(
-    debug=True, max_request_size=1024 * 1024 * 100
+    debug=True, max_request_size=1024 * 1024 * 100, root_path="/api"
 )  # Set to a larger value (100MB in this example))
 session = SessionManager()
 

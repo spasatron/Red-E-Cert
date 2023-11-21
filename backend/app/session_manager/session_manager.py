@@ -48,7 +48,9 @@ class SessionManager:
             "code": authCode,
             "grant_type": "authorization_code",
             "client_id": APP_KEY,
-            "redirect_uri": "https://165.140.242.95/authenticate",
+            "redirect_uri": "http://localhost:8080/authenticate"
+            if os.environ.get("DEVELOPMENT")
+            else "https://165.140.242.95/authenticate",
             "client_secret": APP_SECRET,
         }
 

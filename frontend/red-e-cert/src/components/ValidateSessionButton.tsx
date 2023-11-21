@@ -2,7 +2,7 @@ import Cookies from "js-cookie";
 import { useState } from "react";
 
 async function checkSession(setState: (value: boolean | null) => void) {
-  const response = await fetch(`https://165.140.242.95:8080/verify-session/`, {
+  const response = await fetch(`/api/verify-session/`, {
     method: "GET",
     credentials: "include", // Include cookies in the request
     headers: {

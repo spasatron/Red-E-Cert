@@ -5,6 +5,7 @@ import ImageUploadComponent from "./ImageUpload";
 import { useState } from "react";
 import { Cell } from "../interfaces/types";
 import PrintButton from "./PrintButton";
+import { ToastContainer } from "react-toastify";
 // const reorder = (
 //   list: Cell[],
 //   startIndex: number,
@@ -229,6 +230,19 @@ function Homepage() {
           </thead>
           <tbody className="cert-grid">{renderCerts()}</tbody>
         </table>
+        <ToastContainer
+          className="hide-print"
+          position="bottom-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
         <PrintButton />
       </div>
     );

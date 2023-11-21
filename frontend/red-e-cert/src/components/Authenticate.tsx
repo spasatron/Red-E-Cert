@@ -19,22 +19,19 @@ function Authenticate() {
         const userInfo = JSON.parse(decodeURIComponent(state));
 
         const response = await fetch(
-          `https://165.140.242.95:8080/create-dropbox-session/${authCode}`,
+          `/api/create-dropbox-session/${authCode}`,
           { method: "POST" }
         );
         const token = await response.json();
         console.log(token);
         Cookies.set("authToken", token, { expires: 1 / 48 });
-        const qr_src_response = await fetch(
-          `https://165.140.242.95:8080/get-qr-src`,
-          {
-            method: "GET",
-            credentials: "include",
-            headers: {
-              Authorization: "Bearer " + Cookies.get("authToken"), // Include the token as a Beare
-            },
-          }
-        );
+        const qr_src_response = await fetch(`/api/get-qr-src`, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            Authorization: "Bearer " + Cookies.get("authToken"), // Include the token as a Beare
+          },
+        });
         const qr_src = await qr_src_response.json();
 
         // Send a request to your backend to validate the authentication code

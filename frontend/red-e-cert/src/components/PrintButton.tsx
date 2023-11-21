@@ -1,4 +1,6 @@
 import Cookies from "js-cookie";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 async function uploadToDropbox(data: string) {
   // Convert base64 data to a Blob
@@ -15,27 +17,31 @@ async function uploadToDropbox(data: string) {
   };
 
   const fileBlob = base64ToBlob(data);
-  const dropbox_link_respose = await fetch(
-    `https://165.140.242.95:8080/dropbox-upload-main-link`,
-    {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        Authorization: "Bearer " + Cookies.get("authToken"), // Include the token as a Beare
-        "Content-Type": "text/x-typescript",
-      },
-    }
-  );
+  const dropbox_link_respose = await fetch(`/api/dropbox-upload-main-link`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      Authorization: "Bearer " + Cookies.get("authToken"), // Include the token as a Beare
+      "Content-Type": "text/x-typescript",
+    },
+  });
   const dropbox_link = await dropbox_link_respose.json();
   console.log(dropbox_link);
 
-  const dropbox_upload_response = await fetch(dropbox_link, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/octet-stream",
-    },
-    body: fileBlob,
-  });
+  const dropbox_upload_response = await toast.promise(
+    fetch(dropbox_link, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/octet-stream",
+      },
+      body: fileBlob,
+    }),
+    {
+      pending: "Uploading To Dropbox",
+      success: "Upload Succeeded",
+      error: "Upload Failed",
+    }
+  );
 
   const dropbox_upload = await dropbox_upload_response.json();
   console.log(dropbox_upload);
@@ -57,12 +63,16 @@ function PrintButton() {
       formData.append("html_file", file);
       console.log("Getting Repsonse");
       console.log(file);
-      const response_pdf = await fetch(
-        `https://165.140.242.95:8080/generate-pdf`,
-        {
+      const response_pdf = await toast.promise(
+        fetch(`/api/generate-pdf`, {
           method: "POST",
           credentials: "include",
           body: formData,
+        }),
+        {
+          pending: "Generating PDF",
+          success: "PDF Generated!",
+          error: "PDF Generation Failed!",
         }
       );
       const response_data = await response_pdf.json();
@@ -72,13 +82,15 @@ function PrintButton() {
     }
   };
   return (
-    <button
-      type="submit"
-      className="print-button hide-print"
-      onClick={printScreen}
-    >
-      Upload To Dropbox
-    </button>
+    <>
+      <button
+        type="submit"
+        className="print-button hide-print"
+        onClick={printScreen}
+      >
+        Upload To Dropbox
+      </button>
+    </>
   );
 }
 

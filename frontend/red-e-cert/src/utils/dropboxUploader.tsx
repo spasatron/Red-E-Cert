@@ -31,18 +31,15 @@ export async function getDropboxUploadURI(
   onFailureCallback?: (error: Error) => void
 ): Promise<string | undefined> {
   try {
-    const dropbox_link_respose = await fetch(
-      `https://165.140.242.95:8080/dropbox-upload-link`,
-      {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          Authorization: "Bearer " + Cookies.get("authToken"), // Include the token as a Beare
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ filename: file.name }),
-      }
-    );
+    const dropbox_link_respose = await fetch(`/api/dropbox-upload-link`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        Authorization: "Bearer " + Cookies.get("authToken"), // Include the token as a Beare
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ filename: file.name }),
+    });
     if (!dropbox_link_respose.ok) {
       throw new Error(`HTTP error! Status: ${dropbox_link_respose.status}`);
     }
