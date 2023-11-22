@@ -50,7 +50,7 @@ class SessionManager:
             "client_id": APP_KEY,
             "redirect_uri": "http://localhost:8080/authenticate"
             if os.environ.get("DEVELOPMENT")
-            else "https://165.140.242.95/authenticate",
+            else "https://fireflysafetyltd.com/authenticate",
             "client_secret": APP_SECRET,
         }
 
