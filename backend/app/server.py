@@ -139,8 +139,11 @@ async def generate_pdf(html_file: UploadFile = File(...)):
         )
 
     try:
+        print("Awaiting Launch")
         # Launch a headless Chromium browser (pyppeteer) for PDF generation
-        browser = await launch()
+        browser = await launch(
+            headless=True, args=["--no-sandbox", "--disable-setuid-sandbox"]
+        )
         page = await browser.newPage()
 
         # Read and render the HTML content
@@ -152,7 +155,7 @@ async def generate_pdf(html_file: UploadFile = File(...)):
         pdf = await page.pdf()
         # Close the browser
         await browser.close()
-
+        print("Awaiting Close")
         pdf_base64 = base64.b64encode(pdf).decode()
         return pdf_base64
     except Exception as e:
